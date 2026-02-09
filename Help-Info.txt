@@ -1,0 +1,7 @@
+#Access PostgreSQL as admin
+sudo -u postgres psql
+⛔ Important
+Once inside psql:
+Commands end with a semicolon ;
+
+CREATE DB USER suncity_admin WITH PASSWORD 'SunCity1234#';
