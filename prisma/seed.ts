@@ -582,6 +582,134 @@ async function seedSolarSystemPrices() {
   console.log("✅ Solar system prices seeded");
 }
 
+// =========================
+// Seed Extras Pricing (EX-GST) 
+// =========================
+// async function seedExtraPrices() {
+//   console.log("🌱 Seeding extras pricing (ex-GST)...");
+
+//   const regions = await prisma.region.findMany();
+//   const regionMap = Object.fromEntries(regions.map(r => [r.code, r.id]));
+
+//   const extras = await prisma.extra.findMany();
+//   const extraMap = Object.fromEntries(extras.map(e => [e.code, e.id]));
+
+//   // Clear existing extras pricing (safe re-run)
+//   await prisma.extraPrice.deleteMany({});
+
+//   const regionOrder = [
+//     "sunshine_coast",
+//     "brisbane_northside",
+//     "brisbane_southside",
+//     "gympie",
+//     "gold_coast_ipswich",
+//     "toowoomba_wide_bay",
+//   ];
+
+//   const data: Prisma.ExtraPriceCreateManyInput[] = [];
+// }
+
+// =========================
+// Seed Extras Pricing (EX-GST)
+// =========================
+async function seedExtraPrices() {
+  console.log("🌱 Seeding extras pricing (ex-GST)...");
+
+  const regions = await prisma.region.findMany();
+  const extras = await prisma.extra.findMany();
+
+  const regionMap: Record<string, string> = {};
+  const extraMap: Record<string, string> = {};
+
+  regions.forEach(r => (regionMap[r.code] = r.id));
+  extras.forEach(e => (extraMap[e.code] = e.id));
+
+  await prisma.extraPrice.deleteMany({});
+
+  const regionOrder = [
+    "sunshine_coast",
+    "brisbane_northside",
+    "brisbane_southside",
+    "gympie",
+    "gold_coast_ipswich",
+    "toowoomba_wide_bay",
+  ];
+
+  const data: Prisma.ExtraPriceCreateManyInput[] = [];
+
+  // -------------------------
+  // ALL REGIONS — FLAT PRICES
+  // -------------------------
+  const flatPrices: Record<string, number> = {
+    electrical_isolator_rcd: 350,
+    safe_tray_mildred_valve: 65,
+    concrete_base: 65,
+    remove_old_tank: 0, // INCLUDED
+    double_storey_highset: 1100,
+    temporary_tank: 550,
+    flat_roof_frame: 550,
+    side_tilt_frame: 750,
+  };
+
+  for (const code of Object.keys(flatPrices)) {
+    const extraId = extraMap[code];
+    if (!extraId) continue;
+
+    for (const regionCode of regionOrder) {
+      const regionId = regionMap[regionCode];
+      if (!regionId) continue;
+
+      data.push({
+        extraId,
+        regionId,
+        price: flatPrices[code],
+      });
+    }
+  }
+
+  // -------------------------
+  // 2-VISIT JOB (REGIONAL)
+  // -------------------------
+  const twoVisitExtraId = extraMap["two_visit_job"];
+  if (twoVisitExtraId) {
+    for (const regionCode of regionOrder) {
+      const regionId = regionMap[regionCode];
+      if (!regionId) continue;
+
+      data.push({
+        extraId: twoVisitExtraId,
+        regionId,
+        price: regionCode === "sunshine_coast" ? 250 : 300,
+      });
+    }
+  }
+
+  // -------------------------
+  // CYCLONE FRAME (WIDE BAY ONLY)
+  // -------------------------
+  const cycloneExtraId = extraMap["cyclone_frame"];
+  const wideBayRegionId = regionMap["toowoomba_wide_bay"];
+
+  if (cycloneExtraId && wideBayRegionId) {
+    data.push({
+      extraId: cycloneExtraId,
+      regionId: wideBayRegionId,
+      price: 925, // Thermosiphon
+    });
+
+    data.push({
+      extraId: cycloneExtraId,
+      regionId: wideBayRegionId,
+      price: 850, // Split
+    });
+  }
+
+  await prisma.extraPrice.createMany({ data });
+
+  console.log("✅ Extras pricing seeded");
+}
+
+
 
 
 // =========================
@@ -596,6 +724,8 @@ async function main() {
   await seedElectricSystemPrices();
   await seedHeatPumpSystemPrices();
   await seedSolarSystemPrices();
+  await seedExtraPrices();
+
 }
 
 
