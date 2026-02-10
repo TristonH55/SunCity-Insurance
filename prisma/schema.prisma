@@ -1,10 +1,12 @@
+datasource db {
+  provider = "postgresql"
+}
+
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql"
-}
+
 
 
 
@@ -32,7 +34,7 @@ model Region {
 model System {
   id                     String   @id @default(uuid())
   brand                  String
-  model                  String
+  model                  String   @unique
   systemType             SystemType
   tankMaterial           TankMaterial
   capacityLitres         Int
@@ -45,6 +47,7 @@ model System {
 
   systemPrices           SystemPrice[]
 }
+
 
 
 model SystemPrice {
