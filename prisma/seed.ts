@@ -275,6 +275,47 @@ async function seedSolarSystems() {
 
   console.log("✅ Solar systems seeded");
 }
+// =========================
+// EXTRAS
+// =========================
+import { ExtraSystemType } from "@prisma/client";
+
+// =========================
+// Seed Extras
+// =========================
+async function seedExtras() {
+  console.log("🌱 Seeding extras...");
+
+  const extras = [
+    // =========================
+    // ALL SYSTEMS
+    // =========================
+    { code: "electrical_isolator_rcd", name: "Electrical isolator & RCD", systemType: ExtraSystemType.all, notes: null, active: true },
+    { code: "safe_tray_mildred_valve", name: "Safe tray / Mildred valve", systemType: ExtraSystemType.all, notes: null, active: true },
+    { code: "remove_old_tank", name: "Remove old tank & disposal", systemType: ExtraSystemType.all, notes: null, active: true },
+    { code: "concrete_base", name: "Concrete base (if required)", systemType: ExtraSystemType.all, notes: null, active: true },
+
+    // =========================
+    // SOLAR ONLY
+    // =========================
+    { code: "double_storey_highset", name: "Double storey / highset roof (crane included)", systemType: ExtraSystemType.solar, notes: null, active: true },
+    { code: "two_visit_job", name: "2 visit job (disconnect & return)", systemType: ExtraSystemType.solar, notes: null, active: true },
+    { code: "temporary_tank", name: "Temporary tank install (up to 30 days)", systemType: ExtraSystemType.solar, notes: null, active: true },
+    { code: "cyclone_frame", name: "Cyclone frame (Wide Bay & above only)", systemType: ExtraSystemType.solar, notes: "Wide Bay & above only", active: true },
+    { code: "flat_roof_frame", name: "Flat roof frame", systemType: ExtraSystemType.solar, notes: null, active: true },
+    { code: "side_tilt_frame", name: "Side tilt frame (custom pitch)", systemType: ExtraSystemType.solar, notes: "Custom pitch, exclusions may apply", active: true },
+  ];
+
+  await prisma.extra.createMany({
+    data: extras,
+    skipDuplicates: true,
+  });
+
+  console.log("✅ Extras seeded");
+}
+
+
+
 
 
 // =========================
@@ -285,7 +326,9 @@ async function main() {
   await seedElectricSystems();
   await seedHeatPumpSystems();
   await seedSolarSystems();
+  await seedExtras();
 }
+
 
 
 
