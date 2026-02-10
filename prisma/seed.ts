@@ -154,6 +154,67 @@ async function seedElectricSystems() {
   console.log("✅ Electric systems seeded");
 }
 
+// =========================
+// HEAT PUMPS
+// =========================
+
+
+// =========================
+// Seed Heat Pump Systems
+// =========================
+async function seedHeatPumpSystems() {
+  console.log("🌱 Seeding heat pump systems...");
+
+  const systems = [
+    // =========================
+    // Rheem Ambipower – Mild Steel
+    // =========================
+    { brand: "Rheem Ambipower", model: "Heat Pump 180L Mild Steel", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.mild_steel, capacityLitres: 180, warrantyPrimaryYears: 7, warrantySecondaryYears: null, notes: null, active: true },
+    { brand: "Rheem Ambipower", model: "Heat Pump 280L Mild Steel", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.mild_steel, capacityLitres: 280, warrantyPrimaryYears: 7, warrantySecondaryYears: null, notes: null, active: true },
+
+    // =========================
+    // iStore – Mild Steel
+    // =========================
+    { brand: "iStore", model: "Heat Pump 180L Mild Steel", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.mild_steel, capacityLitres: 180, warrantyPrimaryYears: 5, warrantySecondaryYears: null, notes: "Rheem all-in-one system", active: true },
+    { brand: "iStore", model: "Heat Pump 270L Mild Steel", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.mild_steel, capacityLitres: 270, warrantyPrimaryYears: 5, warrantySecondaryYears: null, notes: "Rheem all-in-one system", active: true },
+
+    // =========================
+    // Envirosun – Mild Steel
+    // =========================
+    { brand: "Envirosun", model: "Heat Pump 180L Mild Steel", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.mild_steel, capacityLitres: 180, warrantyPrimaryYears: 7, warrantySecondaryYears: null, notes: null, active: true },
+    { brand: "Envirosun", model: "Heat Pump 330L Mild Steel", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.mild_steel, capacityLitres: 330, warrantyPrimaryYears: 7, warrantySecondaryYears: null, notes: null, active: true },
+
+    // =========================
+    // Stiebel Eltron / Thermann – Mild Steel
+    // =========================
+    { brand: "Stiebel Eltron / Thermann", model: "Heat Pump 50L Mild Steel", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.mild_steel, capacityLitres: 50, warrantyPrimaryYears: 7, warrantySecondaryYears: null, notes: "Equivalent Stiebel Eltron system", active: true },
+    { brand: "Stiebel Eltron / Thermann", model: "Heat Pump 80L Mild Steel", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.mild_steel, capacityLitres: 80, warrantyPrimaryYears: 7, warrantySecondaryYears: null, notes: "Equivalent Stiebel Eltron system", active: true },
+
+    // =========================
+    // OMNI X – Stainless Steel
+    // =========================
+    { brand: "OMNI X", model: "Heat Pump 180L Stainless", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 180, warrantyPrimaryYears: 10, warrantySecondaryYears: null, notes: null, active: true },
+    { brand: "OMNI X", model: "Heat Pump 250L Stainless", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 250, warrantyPrimaryYears: 10, warrantySecondaryYears: null, notes: null, active: true },
+    { brand: "OMNI X", model: "Heat Pump 340L Stainless", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 340, warrantyPrimaryYears: 10, warrantySecondaryYears: null, notes: null, active: true },
+    { brand: "OMNI X", model: "Heat Pump 420L Stainless", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 420, warrantyPrimaryYears: 10, warrantySecondaryYears: null, notes: null, active: true },
+
+    // =========================
+    // Reclaim / Sanden – Stainless Steel (Split)
+    // =========================
+    { brand: "Reclaim / Sanden", model: "Heat Pump 250L Stainless Split", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 250, warrantyPrimaryYears: 15, warrantySecondaryYears: null, notes: "Panasonic split system", active: true },
+    { brand: "Reclaim / Sanden", model: "Heat Pump 315L Stainless Split", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 315, warrantyPrimaryYears: 15, warrantySecondaryYears: null, notes: "Panasonic split system", active: true },
+    { brand: "Reclaim / Sanden", model: "Heat Pump 400L Stainless Split", systemType: SystemType.heat_pump, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 400, warrantyPrimaryYears: 15, warrantySecondaryYears: null, notes: "Panasonic split system", active: true },
+  ];
+
+  await prisma.system.createMany({
+    data: systems,
+    skipDuplicates: true,
+  });
+
+  console.log("✅ Heat pump systems seeded");
+}
+
+
 
 // =========================
 // MAIN
@@ -161,7 +222,9 @@ async function seedElectricSystems() {
 async function main() {
   await seedRegions();
   await seedElectricSystems();
+  await seedHeatPumpSystems();
 }
+
 
 main()
   .catch(console.error)
