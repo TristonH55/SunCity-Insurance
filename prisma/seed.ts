@@ -75,7 +75,8 @@
   
 //     console.log("✅ Electric systems seeded");
 //   }
-  
+import { Prisma } from "@prisma/client";
+ 
 import { SystemType, TankMaterial } from "@prisma/client";
 import "dotenv/config";
 import { prisma } from "../src/lib/prisma";
@@ -314,6 +315,92 @@ async function seedExtras() {
   console.log("✅ Extras seeded");
 }
 
+// =========================
+// Seed Electric System Prices (EX-GST)
+// =========================
+async function seedElectricSystemPrices() {
+  console.log("🌱 Seeding electric system prices (ex-GST)...");
+
+  // Fetch regions
+  const regions = await prisma.region.findMany();
+  const regionMap = Object.fromEntries(regions.map(r => [r.code, r.id]));
+
+  // Fetch electric systems
+  const systems = await prisma.system.findMany({
+    where: { systemType: "electric" },
+  });
+  const systemMap = Object.fromEntries(systems.map(s => [s.model, s.id]));
+
+  // Remove existing electric prices (safe re-run)
+  await prisma.systemPrice.deleteMany({
+    where: { systemId: { in: Object.values(systemMap) } },
+  });
+
+  const prices = [
+    // =========================
+    // AquaMAX / Vulcan – Mild Steel
+    // =========================
+    ["Electric 50L Mild Steel", 1500,1500,1600,1600,1700,1825],
+    ["Electric 80L Mild Steel", 1650,1650,1750,1750,1850,1975],
+    ["Electric 125L Mild Steel",1700,1700,1800,1800,1900,2025],
+    ["Electric 160L Mild Steel",1850,1850,1950,1950,2050,2175],
+    ["Electric 250L Mild Steel",1900,1900,2000,2000,2100,2225],
+    ["Electric 315L Mild Steel",2000,2000,2100,2100,2200,2325],
+    ["Electric 400L Mild Steel",2300,2300,2400,2400,2500,2625],
+
+    // =========================
+    // Dux / Thermann – Mild Steel
+    // =========================
+    ["Electric 50L Mild Steel (Dux)",1600,1600,1700,1700,1800,1925],
+    ["Electric 80L Mild Steel (Dux)",1750,1750,1850,1850,1950,2075],
+    ["Electric 125L Mild Steel (Dux)",1850,1850,1950,1950,2050,2175],
+    ["Electric 160L Mild Steel (Dux)",1950,1950,2050,2050,2150,2275],
+    ["Electric 250L Mild Steel (Dux)",2000,2000,2100,2100,2200,2325],
+    ["Electric 315L Mild Steel (Dux)",2100,2100,2200,2200,2300,2425],
+    ["Electric 400L Mild Steel (Dux)",2450,2450,2550,2550,2650,2775],
+
+    // =========================
+    // Rheem Stellar – Stainless Steel
+    // =========================
+    ["Electric 50L Stainless",1800,1800,1900,1900,2000,2125],
+    ["Electric 80L Stainless",1950,1950,2050,2050,2150,2275],
+    ["Electric 125L Stainless",2000,2000,2100,2100,2200,2325],
+    ["Electric 160L Stainless",2150,2150,2250,2250,2350,2425],
+    ["Electric 250L Stainless",2200,2200,2300,2300,2400,2525],
+    ["Electric 315L Stainless",2300,2300,2400,2400,2500,2625],
+  ];
+
+  const regionOrder = [
+    "sunshine_coast",
+    "brisbane_northside",
+    "brisbane_southside",
+    "gympie",
+    "gold_coast_ipswich",
+    "toowoomba_wide_bay",
+  ];
+
+  const data: Prisma.SystemPriceCreateManyInput[] = [];
+
+  for (const [model, ...regionPrices] of prices) {
+    const systemId = systemMap[model];
+    if (!systemId) continue;
+
+    regionPrices.forEach((price, index) => {
+      const regionId = regionMap[regionOrder[index]];
+      if (!regionId) return;
+
+      data.push({
+        systemId,
+        regionId,
+        price,
+      });
+    });
+  }
+
+  await prisma.systemPrice.createMany({ data });
+
+  console.log("✅ Electric system prices seeded");
+}
 
 
 
@@ -327,7 +414,9 @@ async function main() {
   await seedHeatPumpSystems();
   await seedSolarSystems();
   await seedExtras();
+  await seedElectricSystemPrices();
 }
+
 
 
 
