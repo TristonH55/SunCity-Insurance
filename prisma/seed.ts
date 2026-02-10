@@ -494,6 +494,94 @@ async function seedHeatPumpSystemPrices() {
   console.log("✅ Heat pump system prices seeded");
 }
 
+// =========================
+// Seed Solar System Prices (EX-GST)
+// =========================
+async function seedSolarSystemPrices() {
+  console.log("🌱 Seeding solar system prices (ex-GST)...");
+
+  const regions = await prisma.region.findMany();
+  const regionMap = Object.fromEntries(regions.map(r => [r.code, r.id]));
+
+  const systems = await prisma.system.findMany({
+    where: {
+      systemType: { in: ["solar_thermosiphon", "solar_split"] },
+    },
+  });
+  const systemMap = Object.fromEntries(systems.map(s => [s.model, s.id]));
+
+  // Remove existing solar prices (safe re-run)
+  await prisma.systemPrice.deleteMany({
+    where: { systemId: { in: Object.values(systemMap) } },
+  });
+
+  const prices: [string, number, number, number, number, number, number][] = [
+    // =========================
+    // THERMOSIPHON
+    // =========================
+    ["TS Plus 180L 1 Panel", 4900,4900,5000,5000,5100,5225],
+    ["TS Plus 300L 2 Panel", 5350,5350,5450,5450,5550,5675],
+    ["THX Plus 300L 2 Panel", 6750,6750,6850,6850,6950,7075],
+
+    ["Hi-Line 180L 2 Panel", 5575,5575,5675,5675,5775,6000],
+    ["Hi-Line Premier 52L 300L 2 Panel", 5850,5850,5950,5950,6050,6275],
+
+    ["Prestige 330L 2 Panel", 7650,7650,7750,7750,7850,7975],
+    ["L Series 300L 2 Panel", 7250,7250,7350,7350,7450,7575],
+    ["J Series 300L 2 Panel", 8050,8150,8250,8250,8350,8575],
+    ["MK11 300L 2 Panel", 5225,5225,5325,5325,5425,5575],
+
+    // =========================
+    // SPLIT SOLAR
+    // =========================
+    ["AS 250L 2 Panel", 5100,5100,5200,5200,5300,5425],
+    ["AS 315L 3 Panel", 5250,5250,5350,5350,5450,5575],
+    ["AS 400L 2 Panel", 5550,5550,5650,5650,5750,5875],
+    ["AS 400L 3 Panel", 6200,6200,6300,6300,6400,6575],
+
+    ["Lo-Line 250L 2 Panel", 5775,5775,5875,5875,5975,6100],
+    ["Lo-Line 315L 2 Panel", 5850,5950,6050,6050,6150,6275],
+    ["Lo-Line 400L 2 Panel", 6100,6100,6200,6200,6300,6425],
+    ["Lo-Line 400L 3 Panel", 6950,6950,7050,7050,7150,7275],
+
+    ["Ecosmart 250L 2 Panel", 5800,5800,5600,5600,5700,5825],
+    ["Ecosmart 315L 2 Panel", 5900,5900,6000,6000,6100,6275],
+    ["Ecosmart 400L 2 Panel", 6100,6100,6200,6200,6300,6425],
+    ["Ecosmart 400L 3 Panel", 6900,6900,7000,7000,7100,7225],
+  ];
+
+  const regionOrder = [
+    "sunshine_coast",
+    "brisbane_northside",
+    "brisbane_southside",
+    "gympie",
+    "gold_coast_ipswich",
+    "toowoomba_wide_bay",
+  ];
+
+  const data: Prisma.SystemPriceCreateManyInput[] = [];
+
+  for (const [model, ...regionPrices] of prices) {
+    const systemId = systemMap[model];
+    if (!systemId) continue;
+
+    regionPrices.forEach((price, index) => {
+      const regionId = regionMap[regionOrder[index]];
+      if (!regionId) return;
+
+      data.push({
+        systemId,
+        regionId,
+        price,
+      });
+    });
+  }
+
+  await prisma.systemPrice.createMany({ data });
+
+  console.log("✅ Solar system prices seeded");
+}
+
 
 
 // =========================
@@ -507,7 +595,9 @@ async function main() {
   await seedExtras();
   await seedElectricSystemPrices();
   await seedHeatPumpSystemPrices();
+  await seedSolarSystemPrices();
 }
+
 
 
 
