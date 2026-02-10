@@ -215,6 +215,67 @@ async function seedHeatPumpSystems() {
 }
 
 
+// =========================
+// Seed Solar Systems
+// =========================
+async function seedSolarSystems() {
+  console.log("🌱 Seeding solar systems...");
+
+  const systems = [
+    // =========================
+    // THERMOSIPHON SOLAR SYSTEMS
+    // =========================
+
+    // Envirosun
+    { brand: "Envirosun", model: "TS Plus 180L 1 Panel", systemType: SystemType.solar_thermosiphon, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 180, warrantyPrimaryYears: 10, warrantySecondaryYears: 7, notes: "Thermosiphon – 1 panel", active: true },
+    { brand: "Envirosun", model: "TS Plus 300L 2 Panel", systemType: SystemType.solar_thermosiphon, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 300, warrantyPrimaryYears: 10, warrantySecondaryYears: 7, notes: "Thermosiphon – 2 panel", active: true },
+    { brand: "Envirosun", model: "THX Plus 300L 2 Panel", systemType: SystemType.solar_thermosiphon, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 300, warrantyPrimaryYears: 10, warrantySecondaryYears: 10, notes: "Thermosiphon – glycol / frost protected", active: true },
+
+    // Rheem
+    { brand: "Rheem", model: "Hi-Line 180L 2 Panel", systemType: SystemType.solar_thermosiphon, tankMaterial: TankMaterial.mild_steel, capacityLitres: 180, warrantyPrimaryYears: 5, warrantySecondaryYears: 5, notes: "Thermosiphon – 2 panel", active: true },
+    { brand: "Rheem", model: "Hi-Line Premier 52L 300L 2 Panel", systemType: SystemType.solar_thermosiphon, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 300, warrantyPrimaryYears: 10, warrantySecondaryYears: 7, notes: "Thermosiphon – Premier stainless", active: true },
+
+    // Rinnai
+    { brand: "Rinnai", model: "Prestige 330L 2 Panel", systemType: SystemType.solar_thermosiphon, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 330, warrantyPrimaryYears: 10, warrantySecondaryYears: 7, notes: "Thermosiphon – 2 panel", active: true },
+
+    // Solahart
+    { brand: "Solahart", model: "L Series 300L 2 Panel", systemType: SystemType.solar_thermosiphon, tankMaterial: TankMaterial.mild_steel, capacityLitres: 300, warrantyPrimaryYears: 5, warrantySecondaryYears: 5, notes: "Thermosiphon – 2 panel", active: true },
+    { brand: "Solahart", model: "J Series 300L 2 Panel", systemType: SystemType.solar_thermosiphon, tankMaterial: TankMaterial.mild_steel, capacityLitres: 300, warrantyPrimaryYears: 5, warrantySecondaryYears: 5, notes: "Thermosiphon – glycol / frost protected", active: true },
+
+    // Sunrain
+    { brand: "Sunrain", model: "MK11 300L 2 Panel", systemType: SystemType.solar_thermosiphon, tankMaterial: TankMaterial.stainless_steel, capacityLitres: 300, warrantyPrimaryYears: 7, warrantySecondaryYears: 5, notes: "Thermosiphon – Chinese made", active: true },
+
+    // =========================
+    // SPLIT SOLAR SYSTEMS
+    // =========================
+
+    // Envirosun
+    { brand: "Envirosun", model: "AS 250L 2 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 250, warrantyPrimaryYears: 7, warrantySecondaryYears: 7, notes: "Split solar – 2 panel", active: true },
+    { brand: "Envirosun", model: "AS 315L 3 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 315, warrantyPrimaryYears: 7, warrantySecondaryYears: 7, notes: "Split solar – 3 panel", active: true },
+    { brand: "Envirosun", model: "AS 400L 2 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 400, warrantyPrimaryYears: 7, warrantySecondaryYears: 7, notes: "Split solar – 2 panel", active: true },
+    { brand: "Envirosun", model: "AS 400L 3 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 400, warrantyPrimaryYears: 7, warrantySecondaryYears: 7, notes: "Split solar – 3 panel", active: true },
+
+    // Rheem
+    { brand: "Rheem", model: "Lo-Line 250L 2 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 250, warrantyPrimaryYears: 5, warrantySecondaryYears: 5, notes: "Split solar – 2 panel", active: true },
+    { brand: "Rheem", model: "Lo-Line 315L 2 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 315, warrantyPrimaryYears: 5, warrantySecondaryYears: 5, notes: "Split solar – 2 panel", active: true },
+    { brand: "Rheem", model: "Lo-Line 400L 2 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 400, warrantyPrimaryYears: 5, warrantySecondaryYears: 5, notes: "Split solar – 2 panel", active: true },
+    { brand: "Rheem", model: "Lo-Line 400L 3 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 400, warrantyPrimaryYears: 5, warrantySecondaryYears: 5, notes: "Split solar – 3 panel", active: true },
+
+    // Dux
+    { brand: "Dux", model: "Ecosmart 250L 2 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 250, warrantyPrimaryYears: 5, warrantySecondaryYears: 5, notes: "Split solar – 2 panel", active: true },
+    { brand: "Dux", model: "Ecosmart 315L 2 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 315, warrantyPrimaryYears: 5, warrantySecondaryYears: 5, notes: "Split solar – 2 panel", active: true },
+    { brand: "Dux", model: "Ecosmart 400L 2 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 400, warrantyPrimaryYears: 5, warrantySecondaryYears: 5, notes: "Split solar – 2 panel", active: true },
+    { brand: "Dux", model: "Ecosmart 400L 3 Panel", systemType: SystemType.solar_split, tankMaterial: TankMaterial.mild_steel, capacityLitres: 400, warrantyPrimaryYears: 5, warrantySecondaryYears: 5, notes: "Split solar – 3 panel", active: true },
+  ];
+
+  await prisma.system.createMany({
+    data: systems,
+    skipDuplicates: true,
+  });
+
+  console.log("✅ Solar systems seeded");
+}
+
 
 // =========================
 // MAIN
@@ -223,7 +284,9 @@ async function main() {
   await seedRegions();
   await seedElectricSystems();
   await seedHeatPumpSystems();
+  await seedSolarSystems();
 }
+
 
 
 main()
