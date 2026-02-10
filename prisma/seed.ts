@@ -402,6 +402,97 @@ async function seedElectricSystemPrices() {
   console.log("✅ Electric system prices seeded");
 }
 
+// =========================
+// Seed Heat Pump System Prices (EX-GST)
+// =========================
+async function seedHeatPumpSystemPrices() {
+  console.log("🌱 Seeding heat pump system prices (ex-GST)...");
+
+  const regions = await prisma.region.findMany();
+  const regionMap = Object.fromEntries(regions.map(r => [r.code, r.id]));
+
+  const systems = await prisma.system.findMany({
+    where: { systemType: "heat_pump" },
+  });
+  const systemMap = Object.fromEntries(systems.map(s => [s.model, s.id]));
+
+  // Remove existing heat pump prices
+  await prisma.systemPrice.deleteMany({
+    where: { systemId: { in: Object.values(systemMap) } },
+  });
+
+  const prices: [string, number, number, number, number, number, number][] = [
+    // =========================
+    // Rheem Ambipower
+    // =========================
+    ["Ambipower 180L", 3300,3300,3400,3400,3500,3625],
+    ["Ambipower 280L", 3550,3550,3650,3650,3750,3875],
+
+    // =========================
+    // iStore
+    // =========================
+    ["iStore 180L", 3350,3350,3450,3450,3550,3675],
+    ["iStore 270L", 3500,3500,3600,3600,3700,3825],
+
+    // =========================
+    // Envirosun
+    // =========================
+    ["Envirosun 180L", 3200,3200,3300,3300,3400,3525],
+    ["Envirosun 330L", 3450,3450,3550,3550,3650,3775],
+
+    // =========================
+    // Stiebel Eltron / Thermann
+    // =========================
+    ["Stiebel 50L", 3650,3650,3750,3750,3850,3975],
+    ["Stiebel 80L", 3950,3950,4050,4050,4150,4275],
+
+    // =========================
+    // OMNI X – Stainless
+    // =========================
+    ["OMNI X 180L", 3350,3350,3450,3450,3550,3675],
+    ["OMNI X 250L", 3450,3450,3550,3550,3650,3775],
+    ["OMNI X 340L", 3550,3550,3650,3650,3750,3875],
+    ["OMNI X 420L", 3700,3700,3800,3800,3900,4025],
+
+    // =========================
+    // Reclaim / Sanden
+    // =========================
+    ["Reclaim 250L", 6450,6450,6550,6550,6650,6725],
+    ["Reclaim 315L", 6650,6650,6750,6750,6850,6975],
+    ["Reclaim 400L", 6900,6900,7000,7000,7100,7250],
+  ];
+
+  const regionOrder = [
+    "sunshine_coast",
+    "brisbane_northside",
+    "brisbane_southside",
+    "gympie",
+    "gold_coast_ipswich",
+    "toowoomba_wide_bay",
+  ];
+
+  const data: Prisma.SystemPriceCreateManyInput[] = [];
+
+  for (const [model, ...regionPrices] of prices) {
+    const systemId = systemMap[model];
+    if (!systemId) continue;
+
+    regionPrices.forEach((price, index) => {
+      const regionId = regionMap[regionOrder[index]];
+      if (!regionId) return;
+
+      data.push({
+        systemId,
+        regionId,
+        price,
+      });
+    });
+  }
+
+  await prisma.systemPrice.createMany({ data });
+
+  console.log("✅ Heat pump system prices seeded");
+}
 
 
 
@@ -415,7 +506,9 @@ async function main() {
   await seedSolarSystems();
   await seedExtras();
   await seedElectricSystemPrices();
+  await seedHeatPumpSystemPrices();
 }
+
 
 
 
